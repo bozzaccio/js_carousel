@@ -1,0 +1,49 @@
+$c-blue: #2f61a6;
+$c-grey: #a5a5a5;
+
+.carousel-container {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel-header {
+
+  display: grid;
+  grid-template-columns:50px auto;
+  column-gap: 15px;
+}
+
+.carousel-header__icon-container {
+
+  grid-column: 1 / 1;
+  grid-row: 1 / 3;
+  background-color: $c-blue;
+  padding: 5px;
+  border-radius: 20%;
+
+  i {
+    font-size: 40px;
+    color: white;
+  }
+}
+
+.carousel-header__title-container {
+  grid-column: 2 / 2;
+  grid-row: 1 / 1;
+  color: $c-blue;
+  font-size: 20px;
+  font-weight: bold;
+
+  i {
+    vertical-align: middle;
+  }
+}
+
+.carousel-header__subtitle-container {
+  grid-column: 2 / 2;
+  grid-row: 2 / 2;
+  color: $c-grey;
+  font-size: 15px;
+}

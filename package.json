@@ -1,0 +1,22 @@
+{
+  "name": "doceb_carousel",
+  "version": "1.0.0",
+  "description": "carousel project",
+  "main": "index.js",
+  "scripts": {
+    "scss": "sass --watch style.scss:style.css "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bozzaccio/doceb_carousel.git"
+  },
+  "author": "abozzelli",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bozzaccio/doceb_carousel/issues"
+  },
+  "homepage": "https://github.com/bozzaccio/doceb_carousel#readme",
+  "dependencies": {
+    "node-sass": "^5.0.0"
+  }
+}
