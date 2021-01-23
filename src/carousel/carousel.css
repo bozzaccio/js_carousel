@@ -24,6 +24,7 @@
   display: grid;
   grid-template-columns: 50px auto;
   column-gap: 15px;
+  margin-bottom: 10px;
 }
 
 .carousel-header__icon-container {
@@ -82,9 +83,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 10px;
   height: 100%;
   width: 40px;
   background-color: rgba(0, 0, 0, 0.4);
+  visibility: hidden;
   cursor: pointer;
   user-select: none;
 }
@@ -114,10 +117,11 @@
   background: #ffffff;
   display: flex;
   flex-direction: column;
+  margin: 10px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 .card:hover {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.7);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.7);
   cursor: pointer;
 }
 

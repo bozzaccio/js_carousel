@@ -8,12 +8,16 @@ const _INITIAL_CHUNK_SIZE = 6;
 const _INITIAL_PAGE_NUMBER = 0;
 
 let _element = undefined;
+let _carouselBody = undefined;
 let _title = undefined;
 let _subtitle = undefined;
 let _getCards = undefined;
-let _pageNumber = undefined;
 let _nextButton = undefined;
 let _previousButton = undefined;
+
+let _totalCards = [];
+let _pageNumber = 0;
+let _numberOfPages = 0;
 
 /************************************************
  *
@@ -53,6 +57,7 @@ function _initCarouselTemplate() {
     _element.classList.add('carousel-container');
     _setCarouselHeader();
     _setCarouselBody();
+    _initCarouselActionButton();
 }
 
 function _initCarouselActionButton() {
@@ -64,6 +69,7 @@ function _initCarouselActionButton() {
     _nextButton = document.createElement('div');
     _nextButton.classList.add('carousel-body__action-button', 'carousel-body__next-page');
     _nextButton.appendChild(nextIcon);
+    _nextButton.addEventListener('click', ev => _onNextClick(ev));
 
     const previousIcon = document.createElement('i');
     previousIcon.className = 'material-icons';
@@ -72,6 +78,17 @@ function _initCarouselActionButton() {
     _previousButton = document.createElement('div');
     _previousButton.classList.add('carousel-body__action-button', 'carousel-body__previous-page');
     _previousButton.appendChild(previousIcon);
+    _previousButton.addEventListener('click', ev => _onPreviousClick(ev));
+
+    _carouselBody.append(_previousButton);
+    _carouselBody.append(_nextButton);
+
+    _carouselBody.addEventListener("mouseover", function () {
+        _onCarouselBodyOver('over');
+    });
+    _carouselBody.addEventListener("mouseout", function () {
+        _onCarouselBodyOver('out');
+    });
 }
 
 /**
@@ -118,17 +135,26 @@ function _setCarouselBody() {
 
     _getCards(_INITIAL_CHUNK_SIZE).then((response) => {
         _loadCardIntoCarousel(body, response);
-    });
+    }).catch();
 
-    _initCarouselActionButton();
-    body.append(_previousButton);
-    body.append(_nextButton);
-
+    _carouselBody = body;
     _element.appendChild(body)
 }
 
+function _setDisplayCards() {
+
+    _carouselBody.querySelectorAll('.card').forEach(n => n.remove());
+    const displayCards = _totalCards.splice(_pageNumber, _INITIAL_CHUNK_SIZE);
+    displayCards.forEach(card => _carouselBody.appendChild(card));
+}
+
 function _loadCardIntoCarousel(carouselElement, cardsArray) {
-    cardsArray.forEach(card => carouselElement.appendChild(_getCardElement(card)));
+
+    cardsArray.forEach(card => {
+        const cardElement = _getCardElement(card);
+        _totalCards.push(cardElement);
+    });
+    _setDisplayCards();
 }
 
 function _getCardElement(cardProperties) {
@@ -210,6 +236,30 @@ function _getCardBody(cardProperties) {
     }
 
     return cardBody;
+}
+
+function _onCarouselBodyOver(event) {
+
+    if (event === 'over') {
+        _nextButton.style.visibility = 'visible';
+        _previousButton.style.visibility = 'visible';
+    } else {
+        _nextButton.style.visibility = 'hidden';
+        _previousButton.style.visibility = 'hidden';
+    }
+}
+
+function _onNextClick(event) {
+
+    _getCards(null).then((response) => {
+        _loadCardIntoCarousel(_carouselBody, response);
+        _numberOfPages += 1;
+        _pageNumber += 1;
+    });
+}
+
+function _onPreviousClick(event) {
+
 }
 
 function _logError(errorCode) {
