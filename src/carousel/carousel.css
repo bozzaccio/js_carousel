@@ -1,3 +1,17 @@
+/****************************
+  LIGHT-MODE COLOURS PALETTE
+ ****************************/
+/****************************
+  DARK-MODE COLOURS PALETTE
+ ****************************/
+/****************************
+  MIXINS
+ ****************************/
+/************************************
+ *
+ *  CAROUSEL CLASS
+ *
+ ************************************/
 .carousel-container {
   height: 400px;
   display: flex;
@@ -56,6 +70,7 @@
   height: 100%;
   background: #3c3c3c;
   margin: 0;
+  display: flex;
 }
 
 /************************************
@@ -96,7 +111,7 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.4);
   font-size: 20px;
   color: #ffffff;
   padding: 5px;

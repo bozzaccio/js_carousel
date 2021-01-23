@@ -40,7 +40,7 @@ function _setCarouselLocalElement(options) {
     _title = options.title;
     _subtitle = options.subtitle;
     _element = document.getElementById(options.container);
-    _getCards = options.fetchCards();
+    _getCards = options.fetchCards;
 }
 
 function _initCarouselTemplate() {
@@ -91,27 +91,35 @@ function _setCarouselBody() {
     const body = document.createElement('div');
     body.classList.add('carousel-body');
 
-    body.appendChild(_getCardElement())
+    _getCards().then((response) => {
+        _loadCardIntoCarousel(body, response);
+    });
 
     _element.appendChild(body)
 
 }
 
-function _getCardElement() {
+function _loadCardIntoCarousel(carouselElement, cardsArray) {
+    cardsArray.forEach(card => carouselElement.appendChild(_getCardElement(card)));
+}
+
+function _getCardElement(cardProperties) {
 
     const card = document.createElement('div');
     card.classList.add('card');
 
-    card.appendChild(_getCardHeader());
-    card.appendChild(_getCardBody());
+    card.appendChild(_getCardHeader(cardProperties));
+    card.appendChild(_getCardBody(cardProperties));
 
     return card;
 }
 
-function _getCardHeader() {
+function _getCardHeader(cardProperties) {
 
-    const type2 = 'ELEARNING';
-    const time2 = '1:12'
+    if (!cardProperties && !cardProperties.language) {
+        _logError(1);
+        return;
+    }
 
     const cardHeader = document.createElement('div');
     cardHeader.classList.add('card-header');
@@ -121,38 +129,65 @@ function _getCardHeader() {
 
     cardHeader.appendChild(cardHeaderImg);
 
-    const type = document.createElement('span');
-    type.classList.add('card-header__type');
-    type.append(type2);
-    cardHeader.append(type);
+    if (!cardProperties && !cardProperties.type) {
+        _logError(2);
+    } else {
 
-    const time = document.createElement('span');
-    time.classList.add('card-header__time');
-    time.append(time2);
-    cardHeader.append(time);
+        const type = document.createElement('span');
+        type.classList.add('card-header__type');
+        type.append(cardProperties.type);
+        cardHeader.append(type);
+    }
+
+    if (cardProperties && cardProperties.duration) {
+
+        const hours = Math.floor(cardProperties.duration / 3600);
+        const minutes = Math.ceil(cardProperties.duration / 60) % 60;
+
+        const time = document.createElement('span');
+        time.classList.add('card-header__time');
+        time.append(`${hours}h ${minutes}m`);
+        cardHeader.append(time);
+    }
 
     return cardHeader
 }
 
-function _getCardBody() {
+function _getCardBody(cardProperties) {
 
-    const title2 = 'Card carousel title';
-    const language2 = 'English';
+    if (!cardProperties && !cardProperties.language) {
+        _logError(1);
+        return;
+    }
 
     const cardBody = document.createElement('div');
     cardBody.classList.add('card-body');
 
     const title = document.createElement('span');
     title.classList.add('card-body__title');
-    title.append(title2);
+    title.append(cardProperties.title);
     cardBody.appendChild(title);
 
-    if (language2) {
+    if (cardProperties && cardProperties.language) {
         const language = document.createElement('span');
         language.classList.add('card-body__language');
-        language.append(language2);
+        language.append(cardProperties.language);
         cardBody.appendChild(language);
     }
 
     return cardBody;
+}
+
+function _logError(errorCode) {
+
+    switch (errorCode) {
+        case 1:
+            console.error("Error: Card properties cannot be null!");
+            break;
+        case 2:
+            console.warn("Warning: Card type should have a value");
+            break;
+        default:
+            break;
+    }
 }

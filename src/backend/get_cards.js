@@ -11,13 +11,12 @@ async function getCards() {
 
     for (let i = 0; i < cardListLength; i++) {
         cardList.push({
-            imgUrl: 'http://placeimg.com/200/100',
+            image: 'http://placeimg.com/200/100',
             type: cardTypes[Math.round(Math.random() * 3)],
-            isCollection: Math.random() < 0.5,
-            language: Math.random() < 0.5 ? 'English' : null,
+            duration: 1800 + Math.round(Math.random() * 10800),
             title: 'Card carousel title',
-            time_hrs : Math.random() < 0.5 ? Math.round(Math.random()*12) : null,
-            time_min : Math.round(Math.random()*60)
+            cardinality: Math.random() >= 0.5 ? 'single' : 'collection',
+            language: Math.random() < 0.5 ? 'English' : null,
         });
     }
 

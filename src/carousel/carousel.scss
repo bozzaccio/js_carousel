@@ -1,6 +1,35 @@
+
+/****************************
+  LIGHT-MODE COLOURS PALETTE
+ ****************************/
+
 $c-blue: #2f61a6;
 $c-grey: #a5a5a5;
 $c-white: #ffffff;
+
+/****************************
+  DARK-MODE COLOURS PALETTE
+ ****************************/
+
+$c-d-light-grey : #dadada;
+$c-d-black : #000000;
+$c-d-grey : #3c3c3c;
+
+/****************************
+  MIXINS
+ ****************************/
+
+@mixin card-section {
+  width: 100%;
+  height: 50%;
+  margin: 0;
+}
+
+/************************************
+ *
+ *  CAROUSEL CLASS
+ *
+ ************************************/
 
 .carousel-container {
   height: 400px;
@@ -66,6 +95,7 @@ $c-white: #ffffff;
   height: 100%;
   background: #3c3c3c;
   margin: 0;
+  display: flex;
 }
 
 /************************************
@@ -73,12 +103,6 @@ $c-white: #ffffff;
  *  CARD
  *
  ************************************/
-
-@mixin card-section {
-  width: 100%;
-  height: 50%;
-  margin: 0;
-}
 
 .card {
   width: 270px;
@@ -113,7 +137,7 @@ $c-white: #ffffff;
     position: absolute;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.4);
     font-size: 20px;
     color: $c-white;
     padding: 5px;
