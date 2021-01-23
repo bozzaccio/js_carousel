@@ -16,7 +16,7 @@ async function getCards() {
             isCollection: Math.random() < 0.5,
             language: Math.random() < 0.5 ? 'English' : null,
             title: 'Card carousel title',
-            time_hrs : Math.round(Math.random()*12),
+            time_hrs : Math.random() < 0.5 ? Math.round(Math.random()*12) : null,
             time_min : Math.round(Math.random()*60)
         });
     }
