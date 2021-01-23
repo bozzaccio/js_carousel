@@ -146,7 +146,13 @@ function _getCardHeader(cardProperties) {
 
         const time = document.createElement('span');
         time.classList.add('card-header__time');
-        time.append(`${hours}h ${minutes}m`);
+
+        if (hours !== 0) {
+            time.append(`${hours}h ${minutes}m`);
+        } else {
+            time.append(`${minutes}:00`);
+        }
+
         cardHeader.append(time);
     }
 
