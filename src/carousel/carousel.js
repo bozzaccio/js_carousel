@@ -4,10 +4,16 @@
  *
  ************************************************/
 
+const _INITIAL_CHUNK_SIZE = 6;
+const _INITIAL_PAGE_NUMBER = 0;
+
 let _element = undefined;
 let _title = undefined;
 let _subtitle = undefined;
 let _getCards = undefined;
+let _pageNumber = undefined;
+let _nextButton = undefined;
+let _previousButton = undefined;
 
 /************************************************
  *
@@ -47,6 +53,25 @@ function _initCarouselTemplate() {
     _element.classList.add('carousel-container');
     _setCarouselHeader();
     _setCarouselBody();
+}
+
+function _initCarouselActionButton() {
+
+    const nextIcon = document.createElement('i');
+    nextIcon.className = 'material-icons';
+    nextIcon.append('arrow_forward_ios')
+
+    _nextButton = document.createElement('div');
+    _nextButton.classList.add('carousel-body__action-button', 'carousel-body__next-page');
+    _nextButton.appendChild(nextIcon);
+
+    const previousIcon = document.createElement('i');
+    previousIcon.className = 'material-icons';
+    previousIcon.append('arrow_back_ios')
+
+    _previousButton = document.createElement('div');
+    _previousButton.classList.add('carousel-body__action-button', 'carousel-body__previous-page');
+    _previousButton.appendChild(previousIcon);
 }
 
 /**
@@ -91,12 +116,15 @@ function _setCarouselBody() {
     const body = document.createElement('div');
     body.classList.add('carousel-body');
 
-    _getCards().then((response) => {
+    _getCards(_INITIAL_CHUNK_SIZE).then((response) => {
         _loadCardIntoCarousel(body, response);
     });
 
-    _element.appendChild(body)
+    _initCarouselActionButton();
+    body.append(_previousButton);
+    body.append(_nextButton);
 
+    _element.appendChild(body)
 }
 
 function _loadCardIntoCarousel(carouselElement, cardsArray) {

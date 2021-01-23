@@ -3,9 +3,9 @@
  * @async
  * @return {Promise<Card>} after 1 second
  */
-async function getCards() {
+async function getCards(chunkSize) {
 
-    const cardListLength = Math.floor(Math.random() * 5) + 1;
+    const cardListLength = chunkSize ? chunkSize : Math.floor(Math.random() * 5) + 1;
     const cardList = [];
     const cardTypes = ['video', 'elearning', 'learning_plan', 'playlist'];
 

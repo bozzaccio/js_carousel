@@ -23,8 +23,8 @@
         container: 'my-carousel',
         title: 'Vestibulum velit diam',
         subtitle: 'Lorem ipsum dolor sit amet. consectetur adipiscing elit.',
-        fetchCards: function (){
-            return getCards();
+        fetchCards: function (chunkSize){
+            return getCards(chunkSize);
         }
     }
     const carousel = new Carousel(carouselOptions);

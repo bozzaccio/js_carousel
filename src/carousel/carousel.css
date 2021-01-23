@@ -72,6 +72,35 @@
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
+  position: relative;
+}
+
+.carousel-body__action-button {
+  position: absolute;
+  z-index: 99;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 40px;
+  background-color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  user-select: none;
+}
+.carousel-body__action-button i {
+  color: #ffffff;
+}
+.carousel-body__action-button:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.carousel-body__previous-page {
+  left: 0;
+}
+
+.carousel-body__next-page {
+  right: 0;
 }
 
 /************************************
@@ -81,7 +110,7 @@
  ************************************/
 .card {
   width: 270px;
-  height: 270px;
+  height: 100%;
   background: #ffffff;
   display: flex;
   flex-direction: column;
@@ -111,17 +140,18 @@
   z-index: 1;
   color: #ffffff;
   padding: 5px;
-  height: 30px;
+  height: 21px;
+  font-size: 11px;
 }
 .card-header .card-header__time {
   position: absolute;
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  font-size: 20px;
   color: #ffffff;
   padding: 5px;
-  height: 30px;
+  height: 21px;
+  font-size: 11px;
 }
 
 .card-body {
