@@ -23,6 +23,7 @@ function Carousel(options) {
     _setCarouselElement(options);
     _element.classList.add('carousel-container');
     _setCarouselHeader();
+    options.fetchCards().then(result => console.log(result));
 }
 
 /************************************************

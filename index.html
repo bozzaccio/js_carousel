@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="src/carousel/carousel.css" type="text/css">
 
     <script type="text/javascript" src="src/carousel/carousel.js"></script>
+    <script type="text/javascript" src="src/backend/get_cards.js"></script>
 </head>
 <body>
 <h1>Carousel Demo Page</h1>
@@ -19,11 +20,13 @@
     const carouselOptions = {
         container: 'my-carousel',
         title: 'Vestibulum velit diam',
-        subtitle: 'Lorem ipsum dolor sit amet. consectetur adipiscing elit.'
+        subtitle: 'Lorem ipsum dolor sit amet. consectetur adipiscing elit.',
+        fetchCards: function (){
+            return getCards();
+        }
     }
 
     const carousel = new Carousel(carouselOptions);
-
 
 
 </script>
