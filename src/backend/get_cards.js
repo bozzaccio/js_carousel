@@ -1,9 +1,11 @@
 /**
  * Generate a fake array of cards.
  * @async
- * @return {Promise<Card>} after 1.5 second
+ * @return {Promise<[]>} after 1.5 second
  */
 async function getCards(chunkSize) {
+
+    // await new Promise(resolve => setTimeout(resolve, 1500));
 
     const cardListLength = chunkSize ? chunkSize : Math.floor(Math.random() * 5) + 1;
     const cardList = [];
@@ -20,7 +22,13 @@ async function getCards(chunkSize) {
         });
     }
 
-    return new Promise(resolve => {
+    // return new Promise(resolve => {
+    //     setTimeout(() => {
+    //         resolve(cardList);
+    //     }, 1500);
+    // });
+
+    return await new Promise(resolve => {
         setTimeout(() => {
             resolve(cardList);
         }, 1500);

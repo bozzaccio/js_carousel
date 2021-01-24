@@ -6,19 +6,9 @@
 
 const _INITIAL_CHUNK_SIZE = 6;
 const _INITIAL_PAGE_NUMBER = 0;
+const _carousel_array = []
 
-let _element = undefined;
-let _carouselBody = undefined;
-let _title = undefined;
-let _subtitle = undefined;
-let _getCards = undefined;
-let _nextButton = undefined;
-let _previousButton = undefined;
-
-let _totalCards = [];
-let _pageNumber = 0;
-let _numberOfPages = 0;
-let _isLoading = false;
+let _getCardsFunction = undefined;
 
 /************************************************
  *
@@ -32,8 +22,38 @@ let _isLoading = false;
  * @constructor
  */
 function Carousel(options) {
-    _setCarouselLocalElement(options);
-    _initCarouselTemplate();
+    _getCardsFunction = options.fetchCards;
+
+    const htmlEl = document.getElementsByTagName('div');
+
+    for (let i = 0; i < htmlEl.length; i++) {
+        htmlEl[i].innerHTML = "";
+    }
+
+    if (!_carousel_array.some(carousel => carousel._elementId === options.container)) {
+        _carousel_array.push(new CarouselClass(options));
+    }
+
+    _initTemplate();
+}
+
+
+function CarouselClass(options) {
+
+    this._title = options.title;
+    this._subtitle = options.subtitle;
+    this._element = document.getElementById(options.container);
+    this._elementId = options.container;
+    this._carouselBody = undefined;
+    this._getCards = undefined;
+    this._nextButton = undefined;
+    this._previousButton = undefined;
+    this._totalCards = [];
+    this._pageNumber = 0;
+    this._numberOfPages = 0;
+    this._isLoading = false;
+
+
 }
 
 /************************************************
@@ -42,41 +62,47 @@ function Carousel(options) {
  *
  ************************************************/
 
-function _initCarouselTemplate() {
-    _element.classList.add('carousel-container');
-    _setCarouselHeader();
-    _setCarouselBody();
-    _initCarouselActionButton();
+function _initTemplate() {
+    _carousel_array.forEach(carousel => {
+        _initCarouselTemplate(carousel);
+    });
 }
 
-function _initCarouselActionButton() {
+function _initCarouselTemplate(carousel) {
+    carousel._element.classList.add('carousel-container');
+    _setCarouselHeader(carousel);
+    _setCarouselBody(carousel);
+    _initCarouselActionButton(carousel);
+}
+
+function _initCarouselActionButton(carousel) {
 
     const nextIcon = document.createElement('i');
     nextIcon.className = 'material-icons';
     nextIcon.append('arrow_forward_ios')
 
-    _nextButton = document.createElement('div');
-    _nextButton.classList.add('carousel-body__action-button', 'carousel-body__next-page');
-    _nextButton.appendChild(nextIcon);
-    _nextButton.addEventListener('click', ev => _onNextClick());
+    carousel._nextButton = document.createElement('div');
+    carousel._nextButton.classList.add('carousel-body__action-button', 'carousel-body__next-page');
+    carousel._nextButton.appendChild(nextIcon);
+    carousel._nextButton.addEventListener('click', ev => _onNextClick(carousel));
 
     const previousIcon = document.createElement('i');
     previousIcon.className = 'material-icons';
     previousIcon.append('arrow_back_ios')
 
-    _previousButton = document.createElement('div');
-    _previousButton.classList.add('carousel-body__action-button', 'carousel-body__previous-page');
-    _previousButton.appendChild(previousIcon);
-    _previousButton.addEventListener('click', ev => _onPreviousClick());
+    carousel._previousButton = document.createElement('div');
+    carousel._previousButton.classList.add('carousel-body__action-button', 'carousel-body__previous-page');
+    carousel._previousButton.appendChild(previousIcon);
+    carousel._previousButton.addEventListener('click', ev => _onPreviousClick(carousel));
 
-    _carouselBody.append(_previousButton);
-    _carouselBody.append(_nextButton);
+    carousel._carouselBody.append(carousel._previousButton);
+    carousel._carouselBody.append(carousel._nextButton);
 
-    _carouselBody.addEventListener("mouseover", function () {
-        _onCarouselBodyOver('over');
+    carousel._element.addEventListener("mouseover", function () {
+        _onCarouselBodyOver(carousel, 'over');
     });
-    _carouselBody.addEventListener("mouseout", function () {
-        _onCarouselBodyOver('out');
+    carousel._element.addEventListener("mouseout", function () {
+        _onCarouselBodyOver(carousel, 'out');
     });
 }
 
@@ -87,21 +113,9 @@ function _initCarouselActionButton() {
 
 /**
  *
- * @param options
  * @private
  */
-function _setCarouselLocalElement(options) {
-    _title = options.title;
-    _subtitle = options.subtitle;
-    _element = document.getElementById(options.container);
-    _getCards = options.fetchCards;
-}
-
-/**
- *
- * @private
- */
-function _setCarouselHeader() {
+function _setCarouselHeader(carousel) {
 
     const header = document.createElement('div');
     header.classList.add('carousel-header');
@@ -118,7 +132,7 @@ function _setCarouselHeader() {
 
     const title = document.createElement('span');
     title.className = 'carousel-header__title-container';
-    title.append(_title);
+    title.append(carousel._title);
 
     const rightTitleArrow = document.createElement('i');
     rightTitleArrow.className = 'material-icons';
@@ -129,54 +143,53 @@ function _setCarouselHeader() {
 
     const subtitle = document.createElement('span');
     subtitle.className = 'carousel-header__subtitle-container';
-    subtitle.append(_subtitle);
+    subtitle.append(carousel._subtitle);
     header.append(subtitle);
 
-    _element.appendChild(header)
+    carousel._element.appendChild(header)
 }
 
-function _setCarouselBody() {
+function _setCarouselBody(carousel) {
     const body = document.createElement('div');
     body.classList.add('carousel-body');
+    carousel._carouselBody = body;
 
-    _carouselBody = body;
-    _onLoadCarouselElements(_INITIAL_CHUNK_SIZE);
-    _element.appendChild(body)
+    _onLoadCarouselElements(carousel, _INITIAL_CHUNK_SIZE);
+    carousel._element.appendChild(body)
 }
 
-function _setDisplayCards(skeletonCards) {
+function _setDisplayCards(carousel, skeletonCards) {
 
-    _carouselBody.querySelectorAll('.card').forEach(n => n.remove());
-    _carouselBody.querySelectorAll('.card-skeleton').forEach(n => n.remove());
+    carousel._carouselBody.querySelectorAll('.card').forEach(n => n.remove());
+    carousel._carouselBody.querySelectorAll('.card-skeleton').forEach(n => n.remove());
     let totalCards = [];
 
     if (skeletonCards) {
         totalCards = [...skeletonCards];
     } else {
-        totalCards = [..._totalCards];
+        totalCards = [...carousel._totalCards];
     }
 
-    const displayCards = totalCards.splice(_pageNumber * _INITIAL_CHUNK_SIZE, _INITIAL_CHUNK_SIZE);
+    const displayCards = totalCards.splice(carousel._pageNumber * _INITIAL_CHUNK_SIZE, _INITIAL_CHUNK_SIZE);
     displayCards.forEach(card => {
-        _carouselBody.appendChild(card);
+        carousel._carouselBody.appendChild(card);
     });
 }
 
-function _loadCardIntoCarousel(carouselElement, cardsArray) {
+function _loadCardIntoCarousel(carousel, cardsArray) {
 
     cardsArray.forEach(card => {
-        // const cardElement = _getCardElement(card);
         const cardElement = _getCardElement(card);
-        _totalCards.push(cardElement);
+        carousel._totalCards.push(cardElement);
     });
-    _setDisplayCards();
+    _setDisplayCards(carousel);
 }
 
-function _fillCarouselWithSkeleton() {
+function _fillCarouselWithSkeleton(carousel) {
 
     const skeletonArray = new Array(_INITIAL_CHUNK_SIZE).fill('').map(_ => _getSkeletonCard());
 
-    _setDisplayCards(skeletonArray);
+    _setDisplayCards(carousel, skeletonArray);
 }
 
 /************************************************
@@ -198,7 +211,7 @@ function _getCardElement(cardProperties) {
 
     const card = document.createElement('div');
     card.classList.add('card');
-    if(cardProperties.cardinality === 'collection'){
+    if (cardProperties.cardinality === 'collection') {
         card.classList.add('card__cardinality');
     }
 
@@ -308,61 +321,61 @@ function _loadCardBodyData(cardBody, cardProperties) {
  * ON EVENTS CALLBACK
  ************************************************/
 
-function _onCarouselBodyOver(event) {
+function _onCarouselBodyOver(carousel, event) {
 
     if (event === 'over') {
 
-        if (_carouselBody.getElementsByClassName('card').length === _INITIAL_CHUNK_SIZE) {
-            _nextButton.style.visibility = 'visible';
+        if (carousel._carouselBody.getElementsByClassName('card').length === _INITIAL_CHUNK_SIZE) {
+            carousel._nextButton.style.visibility = 'visible';
         } else {
-            _nextButton.style.visibility = 'hidden';
+            carousel._nextButton.style.visibility = 'hidden';
         }
 
-        if (_pageNumber > 0 && _pageNumber !== _INITIAL_PAGE_NUMBER) {
-            _previousButton.style.visibility = 'visible';
+        if (carousel._pageNumber > 0 && carousel._pageNumber !== _INITIAL_PAGE_NUMBER) {
+            carousel._previousButton.style.visibility = 'visible';
         } else {
-            _previousButton.style.visibility = 'hidden';
+            carousel._previousButton.style.visibility = 'hidden';
         }
     } else {
-        _nextButton.style.visibility = 'hidden';
-        _previousButton.style.visibility = 'hidden';
+        carousel._nextButton.style.visibility = 'hidden';
+        carousel._previousButton.style.visibility = 'hidden';
     }
 }
 
-function _onNextClick() {
+function _onNextClick(carousel) {
 
-    _nextButton.style.visibility = 'hidden';
-    if (_pageNumber === _numberOfPages) {
-        _onLoadCarouselElements(null);
+    carousel._nextButton.style.visibility = 'hidden';
+    if (carousel._pageNumber === carousel._numberOfPages) {
+        _onLoadCarouselElements(carousel, null);
     } else {
-        _pageNumber = _pageNumber + 1;
-        _setDisplayCards();
+        carousel._pageNumber = carousel._pageNumber + 1;
+        _setDisplayCards(carousel);
     }
 
 }
 
-function _onPreviousClick() {
+function _onPreviousClick(carousel) {
 
-    _previousButton.style.visibility = 'hidden';
-    _pageNumber = _pageNumber - 1;
-    _setDisplayCards();
+    carousel._previousButton.style.visibility = 'hidden';
+    carousel._pageNumber = carousel._pageNumber - 1;
+    _setDisplayCards(carousel);
 }
 
-function _onLoadCarouselElements(chunks) {
-    _setIsLoading(true);
+function _onLoadCarouselElements(carousel, chunks) {
+    _setIsLoading(carousel, true);
     if (chunks) {
-        _getCards(chunks).then((response) => {
-            _loadCardIntoCarousel(_carouselBody, response);
+        _getCardsFunction(chunks).then((response) => {
+            _loadCardIntoCarousel(carousel, response);
             _setIsLoading(false);
         }).catch(_ => {
             _logError(3);
             _setIsLoading(false);
         });
     } else {
-        _getCards(null).then((response) => {
-            _numberOfPages = _numberOfPages + 1;
-            _pageNumber = _pageNumber + 1;
-            _loadCardIntoCarousel(_carouselBody, response);
+        _getCardsFunction(null).then((response) => {
+            carousel._numberOfPages = carousel._numberOfPages + 1;
+            carousel._pageNumber = carousel._pageNumber + 1;
+            _loadCardIntoCarousel(carousel, response);
             _setIsLoading(false);
         }).catch(_ => {
             _logError(3);
@@ -392,11 +405,11 @@ function _logError(errorCode) {
     }
 }
 
-function _setIsLoading(isLoading) {
+function _setIsLoading(carousel, isLoading) {
 
     if (isLoading) {
-        _fillCarouselWithSkeleton();
+        _fillCarouselWithSkeleton(carousel);
     }
 
-    _isLoading = isLoading;
+    carousel._isLoading = isLoading;
 }
