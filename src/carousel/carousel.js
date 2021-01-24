@@ -198,6 +198,9 @@ function _getCardElement(cardProperties) {
 
     const card = document.createElement('div');
     card.classList.add('card');
+    if(cardProperties.cardinality === 'collection'){
+        card.classList.add('card__cardinality');
+    }
 
     card.appendChild(_getCardHeader(cardProperties));
     card.appendChild(_getCardBody(cardProperties));

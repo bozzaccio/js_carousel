@@ -144,10 +144,38 @@ $c-white: #ffffff;
   flex-direction: column;
   margin: 10px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
 
   &:hover {
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.7);
     cursor: pointer;
+  }
+}
+
+.card__cardinality {
+
+  &::after{
+    content: "";
+    position: absolute;
+    width: 98%;
+    height: 5px;
+    bottom: -5px;
+    left: 1%;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    background-color: white;
+    border-top: 1px solid #e4e4e4;
+  }
+
+  &::before{
+    content: "";
+    position: absolute;
+    width: 96%;
+    height: 5px;
+    left: 2%;
+    bottom: -10px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    background-color: white;
+    border-top: 1px solid #e4e4e4;
   }
 }
 
@@ -213,6 +241,7 @@ $c-white: #ffffff;
     padding: 5px;
     height: 21px;
     font-size: 11px;
+    font-weight: bold;
   }
 
   .card-header__time {
@@ -224,6 +253,7 @@ $c-white: #ffffff;
     padding: 5px;
     height: 21px;
     font-size: 11px;
+    font-weight: bold;
   }
 }
 
