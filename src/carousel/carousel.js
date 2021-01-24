@@ -129,33 +129,17 @@ function _initCarouselActionButton(carousel) {
     });
 }
 
+/**
+ * Hook the swipe event to carousels.
+ * @param carousel
+ * @private
+ */
 function _initSwipeListener(carousel) {
 
     const selector = '#'.concat(carousel._elementId);
 
     document.querySelector(selector).addEventListener('touchstart', _onSwipeStart);
     document.querySelector(selector).addEventListener('touchend', _onSwipeEnd);
-}
-
-function _onSwipeStart(event) {
-
-    _tmpStartSwipe = event.touches[0].pageX;
-
-    const carouselSwipeId = event.path.find(element => element.id !== "").id;
-    _carouselSwiped = _carousel_array.find(carousel => carousel._elementId === carouselSwipeId);
-}
-
-function _onSwipeEnd(event) {
-
-    _tmpEndSwipe = event.changedTouches[0].pageX;
-
-    if (_tmpEndSwipe < _tmpStartSwipe) {
-        if (_carouselSwiped._carouselBody.getElementsByClassName('card').length === _INITIAL_CHUNK_SIZE)
-            _onNextClick(_carouselSwiped);
-    } else {
-        if (_carouselSwiped._pageNumber > 0 && carousel._pageNumber !== _INITIAL_PAGE_NUMBER)
-            _onPreviousClick(_carouselSwiped)
-    }
 }
 
 /**
@@ -475,6 +459,37 @@ function _onPreviousClick(carousel) {
     carousel._previousButton.style.visibility = 'hidden';
     carousel._pageNumber = carousel._pageNumber - 1;
     _setDisplayCards(carousel);
+}
+
+/**
+ * Set temporary variables after the user start swiping.
+ * @param event
+ * @private
+ */
+function _onSwipeStart(event) {
+
+    _tmpStartSwipe = event.touches[0].pageX;
+
+    const carouselSwipeId = event.path.find(element => element.id !== "").id;
+    _carouselSwiped = _carousel_array.find(carousel => carousel._elementId === carouselSwipeId);
+}
+
+/**
+ * Navigate after finish the swipe action.
+ * @param event
+ * @private
+ */
+function _onSwipeEnd(event) {
+
+    _tmpEndSwipe = event.changedTouches[0].pageX;
+
+    if (_tmpEndSwipe < _tmpStartSwipe) {
+        if (_carouselSwiped._carouselBody.getElementsByClassName('card').length === _INITIAL_CHUNK_SIZE)
+            _onNextClick(_carouselSwiped);
+    } else {
+        if (_carouselSwiped._pageNumber > 0 && carousel._pageNumber !== _INITIAL_PAGE_NUMBER)
+            _onPreviousClick(_carouselSwiped)
+    }
 }
 
 /**

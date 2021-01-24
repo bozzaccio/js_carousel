@@ -7,6 +7,7 @@ see the carousel at: https://bozzaccio.github.io/doceb_carousel/
 &#8594; Developed in vanilla javascript with ES6 feature, written without framework or any third part library. </br>
 &#8594; Possibility to use multiple carousel on the same page. </br>
 &#8594; Navigation with mouse click. </br>
+&#8594; Swipe navigation for mobile device. </br>
 &#8594; Awesome loading effect with placeholder animation. </br>
 
 <h3>FONT & ICONS USED:</h3>
