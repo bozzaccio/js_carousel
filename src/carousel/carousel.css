@@ -151,18 +151,21 @@
 }
 
 .card-skeleton .card-header {
-  background-color: #a5a5a5;
+  transition: all 5s ease;
+  animation: card-skeleton__loading-transition 1.5s infinite linear;
 }
 .card-skeleton .card-body {
   position: relative;
 }
 .card-skeleton .card-body__title {
-  background-color: #d7d7d7;
+  transition: all 5s ease;
+  animation: card-skeleton__loading-transition 1.5s infinite linear;
   width: 90%;
   height: 10px;
 }
 .card-skeleton .card-body__language {
-  background-color: #d7d7d7;
+  transition: all 5s ease;
+  animation: card-skeleton__loading-transition 1.5s infinite linear;
   width: 60%;
   height: 10px;
 }
@@ -182,6 +185,14 @@
   margin: 5px;
 }
 
+@keyframes card-skeleton__loading-transition {
+  from {
+    background-color: #d7d7d7;
+  }
+  to {
+    background-color: #a5a5a5;
+  }
+}
 .card-header {
   width: 100%;
   height: 50%;

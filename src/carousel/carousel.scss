@@ -154,7 +154,7 @@ $c-white: #ffffff;
 
 .card__cardinality {
 
-  &::after{
+  &::after {
     content: "";
     position: absolute;
     width: 98%;
@@ -166,7 +166,7 @@ $c-white: #ffffff;
     border-top: 1px solid #e4e4e4;
   }
 
-  &::before{
+  &::before {
     content: "";
     position: absolute;
     width: 96%;
@@ -182,7 +182,8 @@ $c-white: #ffffff;
 .card-skeleton {
 
   .card-header {
-    background-color: $c-grey;
+    transition: all 5s ease;
+    animation: card-skeleton__loading-transition 1.5s infinite linear;
   }
 
   .card-body {
@@ -190,13 +191,15 @@ $c-white: #ffffff;
   }
 
   .card-body__title {
-    background-color: $c-light-grey;
+    transition: all 5s ease;
+    animation: card-skeleton__loading-transition 1.5s infinite linear;
     width: 90%;
     height: 10px;
   }
 
   .card-body__language {
-    background-color: $c-light-grey;
+    transition: all 5s ease;
+    animation: card-skeleton__loading-transition 1.5s infinite linear;
     width: 60%;
     height: 10px;
   }
@@ -218,6 +221,15 @@ $c-white: #ffffff;
       margin: 5px;
     }
 
+  }
+}
+
+@keyframes card-skeleton__loading-transition {
+  from {
+    background-color: $c-light-grey;
+  }
+  to {
+    background-color: $c-grey;
   }
 }
 
