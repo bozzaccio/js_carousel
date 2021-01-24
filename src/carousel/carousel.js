@@ -9,6 +9,9 @@ const _INITIAL_PAGE_NUMBER = 0;
 const _carousel_array = []
 
 let _getCardsFunction = undefined;
+let _tmpStartSwipe = undefined;
+let _tmpEndSwipe = undefined;
+let _carouselSwiped = undefined;
 
 /************************************************
  *
@@ -87,6 +90,7 @@ function _initCarouselTemplate(carousel) {
     _setCarouselHeader(carousel);
     _setCarouselBody(carousel);
     _initCarouselActionButton(carousel);
+    _initSwipeListener(carousel);
 }
 
 /**
@@ -123,6 +127,35 @@ function _initCarouselActionButton(carousel) {
     carousel._element.addEventListener("mouseout", function () {
         _onCarouselBodyOver(carousel, 'out');
     });
+}
+
+function _initSwipeListener(carousel) {
+
+    const selector = '#'.concat(carousel._elementId);
+
+    document.querySelector(selector).addEventListener('touchstart', _onSwipeStart);
+    document.querySelector(selector).addEventListener('touchend', _onSwipeEnd);
+}
+
+function _onSwipeStart(event) {
+
+    _tmpStartSwipe = event.touches[0].pageX;
+
+    const carouselSwipeId = event.path.find(element => element.id !== "").id;
+    _carouselSwiped = _carousel_array.find(carousel => carousel._elementId === carouselSwipeId);
+}
+
+function _onSwipeEnd(event) {
+
+    _tmpEndSwipe = event.changedTouches[0].pageX;
+
+    if (_tmpEndSwipe < _tmpStartSwipe) {
+        if (_carouselSwiped._carouselBody.getElementsByClassName('card').length === _INITIAL_CHUNK_SIZE)
+            _onNextClick(_carouselSwiped);
+    } else {
+        if (_carouselSwiped._pageNumber > 0 && carousel._pageNumber !== _INITIAL_PAGE_NUMBER)
+            _onPreviousClick(_carouselSwiped)
+    }
 }
 
 /**
