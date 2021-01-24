@@ -1,7 +1,7 @@
 /**
  * Generate a fake array of cards.
  * @async
- * @return {Promise<Card>} after 1 second
+ * @return {Promise<Card>} after 1.5 second
  */
 async function getCards(chunkSize) {
 
@@ -23,6 +23,6 @@ async function getCards(chunkSize) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(cardList);
-        }, 1000);
+        }, 1500);
     });
 }

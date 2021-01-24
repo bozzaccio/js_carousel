@@ -4,6 +4,7 @@
 
 $c-blue: #2f61a6;
 $c-grey: #a5a5a5;
+$c-light-grey: #d7d7d7;
 $c-white: #ffffff;
 
 /****************************
@@ -125,7 +126,7 @@ $c-white: #ffffff;
 }
 
 .carousel-body__next-page {
-  right: 0;
+  right: 5px;
 }
 
 /************************************
@@ -156,16 +157,39 @@ $c-white: #ffffff;
     background-color: $c-grey;
   }
 
+  .card-body {
+    position: relative;
+  }
+
   .card-body__title {
-    background-color: $c-grey;
-    width: 50%;
-    height: 20px;
+    background-color: $c-light-grey;
+    width: 90%;
+    height: 10px;
   }
 
   .card-body__language {
-    background-color: $c-grey;
-    width: 30%;
-    height: 20px;
+    background-color: $c-light-grey;
+    width: 60%;
+    height: 10px;
+  }
+
+  .card-body__footer {
+
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    flex-direction: row;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+
+    span {
+      height: 10px;
+      width: 45%;
+      background-color: $c-light-grey;
+      margin: 5px;
+    }
+
   }
 }
 

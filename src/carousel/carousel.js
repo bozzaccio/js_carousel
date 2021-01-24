@@ -18,6 +18,7 @@ let _previousButton = undefined;
 let _totalCards = [];
 let _pageNumber = 0;
 let _numberOfPages = 0;
+let _isLoading = false;
 
 /************************************************
  *
@@ -138,35 +139,60 @@ function _setCarouselBody() {
     const body = document.createElement('div');
     body.classList.add('carousel-body');
 
-    _getCards(_INITIAL_CHUNK_SIZE).then((response) => {
-        _loadCardIntoCarousel(body, response);
-    }).catch(_ => _logError(3));
-
     _carouselBody = body;
+    _onLoadCarouselElements(_INITIAL_CHUNK_SIZE);
     _element.appendChild(body)
 }
 
-function _setDisplayCards() {
+function _setDisplayCards(skeletonCards) {
 
     _carouselBody.querySelectorAll('.card').forEach(n => n.remove());
+    _carouselBody.querySelectorAll('.card-skeleton').forEach(n => n.remove());
+    let totalCards = [];
 
-    const totalCards = [..._totalCards];
+    if (skeletonCards) {
+        totalCards = [...skeletonCards];
+    } else {
+        totalCards = [..._totalCards];
+    }
+
     const displayCards = totalCards.splice(_pageNumber * _INITIAL_CHUNK_SIZE, _INITIAL_CHUNK_SIZE);
-    displayCards.forEach(card => _carouselBody.appendChild(card));
+    displayCards.forEach(card => {
+        _carouselBody.appendChild(card);
+    });
 }
 
 function _loadCardIntoCarousel(carouselElement, cardsArray) {
 
     cardsArray.forEach(card => {
+        // const cardElement = _getCardElement(card);
         const cardElement = _getCardElement(card);
         _totalCards.push(cardElement);
     });
     _setDisplayCards();
 }
 
+function _fillCarouselWithSkeleton() {
+
+    const skeletonArray = new Array(_INITIAL_CHUNK_SIZE).fill('').map(_ => _getSkeletonCard());
+
+    _setDisplayCards(skeletonArray);
+}
+
 /************************************************
  * ELEMENT GETTER
  ************************************************/
+
+function _getSkeletonCard() {
+
+    const card = document.createElement('div');
+    card.classList.add('card', 'card-skeleton');
+
+    card.appendChild(_getCardHeader());
+    card.appendChild(_getCardBody());
+
+    return card
+}
 
 function _getCardElement(cardProperties) {
 
@@ -181,20 +207,53 @@ function _getCardElement(cardProperties) {
 
 function _getCardHeader(cardProperties) {
 
-    if (!cardProperties && !cardProperties.language) {
-        _logError(1);
-        return;
-    }
-
     const cardHeader = document.createElement('div');
     cardHeader.classList.add('card-header');
 
+    if (cardProperties) {
+        _loadCardHeaderData(cardHeader, cardProperties)
+    }
+
+    return cardHeader
+}
+
+function _getCardBody(cardProperties) {
+
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+
+    const title = document.createElement('span');
+    title.classList.add('card-body__title');
+    cardBody.appendChild(title);
+
+    const language = document.createElement('span');
+    language.classList.add('card-body__language');
+    cardBody.appendChild(language);
+
+    if (cardProperties) {
+        _loadCardBodyData(cardBody, cardProperties);
+    } else if (!cardProperties) {
+        const cardBodyFooter = document.createElement('div');
+        cardBodyFooter.classList.add('card-body__footer');
+        cardBodyFooter.appendChild(document.createElement('span'));
+        cardBodyFooter.appendChild(document.createElement('span'));
+        cardBodyFooter.appendChild(document.createElement('span'));
+        cardBody.appendChild(cardBodyFooter);
+    }
+
+    return cardBody;
+}
+
+function _loadCardHeaderData(cardHeader, cardProperties) {
+
+    cardHeader.classList.add('card-header');
+
     const cardHeaderImg = document.createElement('img');
-    cardHeaderImg.src = "http://placeimg.com/300/200";
+    cardHeaderImg.src = cardProperties.image;
 
     cardHeader.appendChild(cardHeaderImg);
 
-    if (!cardProperties && !cardProperties.type) {
+    if (!cardProperties.type) {
         _logError(2);
     } else {
 
@@ -204,7 +263,7 @@ function _getCardHeader(cardProperties) {
         cardHeader.append(type);
     }
 
-    if (cardProperties && cardProperties.duration) {
+    if (cardProperties.duration) {
 
         const hours = Math.floor(cardProperties.duration / 3600);
         const minutes = Math.ceil(cardProperties.duration / 60) % 60;
@@ -220,39 +279,31 @@ function _getCardHeader(cardProperties) {
 
         cardHeader.append(time);
     }
-
-    return cardHeader
 }
 
-function _getCardBody(cardProperties) {
+function _loadCardBodyData(cardBody, cardProperties) {
 
-    if (!cardProperties && !cardProperties.language) {
+    if (!cardProperties.title) {
         _logError(1);
         return;
     }
-
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('card-body');
 
     const title = document.createElement('span');
     title.classList.add('card-body__title');
     title.append(cardProperties.title);
     cardBody.appendChild(title);
 
-    if (cardProperties && cardProperties.language) {
+    if (cardProperties.language) {
         const language = document.createElement('span');
         language.classList.add('card-body__language');
         language.append(cardProperties.language);
         cardBody.appendChild(language);
     }
-
-    return cardBody;
 }
 
 /************************************************
  * ON EVENTS CALLBACK
  ************************************************/
-
 
 function _onCarouselBodyOver(event) {
 
@@ -275,16 +326,11 @@ function _onCarouselBodyOver(event) {
     }
 }
 
-
 function _onNextClick() {
 
     _nextButton.style.visibility = 'hidden';
     if (_pageNumber === _numberOfPages) {
-        _getCards(null).then((response) => {
-            _numberOfPages = _numberOfPages + 1;
-            _pageNumber = _pageNumber + 1;
-            _loadCardIntoCarousel(_carouselBody, response);
-        }).catch(_ => _logError(3));
+        _onLoadCarouselElements(null);
     } else {
         _pageNumber = _pageNumber + 1;
         _setDisplayCards();
@@ -297,6 +343,29 @@ function _onPreviousClick() {
     _previousButton.style.visibility = 'hidden';
     _pageNumber = _pageNumber - 1;
     _setDisplayCards();
+}
+
+function _onLoadCarouselElements(chunks) {
+    _setIsLoading(true);
+    if (chunks) {
+        _getCards(chunks).then((response) => {
+            _loadCardIntoCarousel(_carouselBody, response);
+            _setIsLoading(false);
+        }).catch(_ => {
+            _logError(3);
+            _setIsLoading(false);
+        });
+    } else {
+        _getCards(null).then((response) => {
+            _numberOfPages = _numberOfPages + 1;
+            _pageNumber = _pageNumber + 1;
+            _loadCardIntoCarousel(_carouselBody, response);
+            _setIsLoading(false);
+        }).catch(_ => {
+            _logError(3);
+            _setIsLoading(false);
+        });
+    }
 }
 
 /************************************************
@@ -318,4 +387,13 @@ function _logError(errorCode) {
         default:
             break;
     }
+}
+
+function _setIsLoading(isLoading) {
+
+    if (isLoading) {
+        _fillCarouselWithSkeleton();
+    }
+
+    _isLoading = isLoading;
 }

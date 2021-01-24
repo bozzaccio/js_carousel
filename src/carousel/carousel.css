@@ -103,7 +103,7 @@
 }
 
 .carousel-body__next-page {
-  right: 0;
+  right: 5px;
 }
 
 /************************************
@@ -129,15 +129,33 @@
 .card-skeleton .card-header {
   background-color: #a5a5a5;
 }
+.card-skeleton .card-body {
+  position: relative;
+}
 .card-skeleton .card-body__title {
-  background-color: #a5a5a5;
-  width: 50%;
-  height: 20px;
+  background-color: #d7d7d7;
+  width: 90%;
+  height: 10px;
 }
 .card-skeleton .card-body__language {
-  background-color: #a5a5a5;
-  width: 30%;
-  height: 20px;
+  background-color: #d7d7d7;
+  width: 60%;
+  height: 10px;
+}
+.card-skeleton .card-body__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  flex-direction: row;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.card-skeleton .card-body__footer span {
+  height: 10px;
+  width: 45%;
+  background-color: #d7d7d7;
+  margin: 5px;
 }
 
 .card-header {
