@@ -41,18 +41,6 @@ function Carousel(options) {
  *
  ************************************************/
 
-/**
- *
- * @param options
- * @private
- */
-function _setCarouselLocalElement(options) {
-    _title = options.title;
-    _subtitle = options.subtitle;
-    _element = document.getElementById(options.container);
-    _getCards = options.fetchCards;
-}
-
 function _initCarouselTemplate() {
     _element.classList.add('carousel-container');
     _setCarouselHeader();
@@ -69,7 +57,7 @@ function _initCarouselActionButton() {
     _nextButton = document.createElement('div');
     _nextButton.classList.add('carousel-body__action-button', 'carousel-body__next-page');
     _nextButton.appendChild(nextIcon);
-    _nextButton.addEventListener('click', ev => _onNextClick(ev));
+    _nextButton.addEventListener('click', ev => _onNextClick());
 
     const previousIcon = document.createElement('i');
     previousIcon.className = 'material-icons';
@@ -78,7 +66,7 @@ function _initCarouselActionButton() {
     _previousButton = document.createElement('div');
     _previousButton.classList.add('carousel-body__action-button', 'carousel-body__previous-page');
     _previousButton.appendChild(previousIcon);
-    _previousButton.addEventListener('click', ev => _onPreviousClick(ev));
+    _previousButton.addEventListener('click', ev => _onPreviousClick());
 
     _carouselBody.append(_previousButton);
     _carouselBody.append(_nextButton);
@@ -89,6 +77,23 @@ function _initCarouselActionButton() {
     _carouselBody.addEventListener("mouseout", function () {
         _onCarouselBodyOver('out');
     });
+}
+
+
+/************************************************
+ * ELEMENT SETTER
+ ************************************************/
+
+/**
+ *
+ * @param options
+ * @private
+ */
+function _setCarouselLocalElement(options) {
+    _title = options.title;
+    _subtitle = options.subtitle;
+    _element = document.getElementById(options.container);
+    _getCards = options.fetchCards;
 }
 
 /**
@@ -135,7 +140,7 @@ function _setCarouselBody() {
 
     _getCards(_INITIAL_CHUNK_SIZE).then((response) => {
         _loadCardIntoCarousel(body, response);
-    }).catch();
+    }).catch(_ => _logError(3));
 
     _carouselBody = body;
     _element.appendChild(body)
@@ -144,7 +149,9 @@ function _setCarouselBody() {
 function _setDisplayCards() {
 
     _carouselBody.querySelectorAll('.card').forEach(n => n.remove());
-    const displayCards = _totalCards.splice(_pageNumber, _INITIAL_CHUNK_SIZE);
+
+    const totalCards = [..._totalCards];
+    const displayCards = totalCards.splice(_pageNumber * _INITIAL_CHUNK_SIZE, _INITIAL_CHUNK_SIZE);
     displayCards.forEach(card => _carouselBody.appendChild(card));
 }
 
@@ -156,6 +163,10 @@ function _loadCardIntoCarousel(carouselElement, cardsArray) {
     });
     _setDisplayCards();
 }
+
+/************************************************
+ * ELEMENT GETTER
+ ************************************************/
 
 function _getCardElement(cardProperties) {
 
@@ -238,29 +249,59 @@ function _getCardBody(cardProperties) {
     return cardBody;
 }
 
+/************************************************
+ * ON EVENTS CALLBACK
+ ************************************************/
+
+
 function _onCarouselBodyOver(event) {
 
     if (event === 'over') {
-        _nextButton.style.visibility = 'visible';
-        _previousButton.style.visibility = 'visible';
+
+        if (_carouselBody.getElementsByClassName('card').length === _INITIAL_CHUNK_SIZE) {
+            _nextButton.style.visibility = 'visible';
+        } else {
+            _nextButton.style.visibility = 'hidden';
+        }
+
+        if (_pageNumber > 0 && _pageNumber !== _INITIAL_PAGE_NUMBER) {
+            _previousButton.style.visibility = 'visible';
+        } else {
+            _previousButton.style.visibility = 'hidden';
+        }
     } else {
         _nextButton.style.visibility = 'hidden';
         _previousButton.style.visibility = 'hidden';
     }
 }
 
-function _onNextClick(event) {
 
-    _getCards(null).then((response) => {
-        _loadCardIntoCarousel(_carouselBody, response);
-        _numberOfPages += 1;
-        _pageNumber += 1;
-    });
+function _onNextClick() {
+
+    _nextButton.style.visibility = 'hidden';
+    if (_pageNumber === _numberOfPages) {
+        _getCards(null).then((response) => {
+            _numberOfPages = _numberOfPages + 1;
+            _pageNumber = _pageNumber + 1;
+            _loadCardIntoCarousel(_carouselBody, response);
+        }).catch(_ => _logError(3));
+    } else {
+        _pageNumber = _pageNumber + 1;
+        _setDisplayCards();
+    }
+
 }
 
-function _onPreviousClick(event) {
+function _onPreviousClick() {
 
+    _previousButton.style.visibility = 'hidden';
+    _pageNumber = _pageNumber - 1;
+    _setDisplayCards();
 }
+
+/************************************************
+ * UTILS
+ ************************************************/
 
 function _logError(errorCode) {
 
@@ -271,6 +312,9 @@ function _logError(errorCode) {
         case 2:
             console.warn("Warning: Card type should have a value");
             break;
+        case 3:
+            console.error("Error: 500, Internal Server Error");
+            break
         default:
             break;
     }

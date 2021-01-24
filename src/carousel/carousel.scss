@@ -135,7 +135,8 @@ $c-white: #ffffff;
  ************************************/
 
 .card {
-  width: 270px;
+  width: 225px;
+  max-width: 225px;
   height: 100%;
   background: $c-white;
   display: flex;
@@ -146,6 +147,25 @@ $c-white: #ffffff;
   &:hover {
     box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.7);
     cursor: pointer;
+  }
+}
+
+.card-skeleton {
+
+  .card-header {
+    background-color: $c-grey;
+  }
+
+  .card-body__title {
+    background-color: $c-grey;
+    width: 50%;
+    height: 20px;
+  }
+
+  .card-body__language {
+    background-color: $c-grey;
+    width: 30%;
+    height: 20px;
   }
 }
 
