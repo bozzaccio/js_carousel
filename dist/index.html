@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carousel Demo Page</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="src/carousel/carousel.css" type="text/css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+    <script type="text/javascript" src="src/carousel/carousel.js"></script>
+    <script type="text/javascript" src="src/backend/get_cards.js"></script>
+</head>
+<body>
+<h1>Carousel Demo Page</h1>
+<div id="my-carousel"></div>
+<div id="my-carousel2"></div>
+
+<script type="text/javascript">
+    const carouselOptions = {
+        container: 'my-carousel',
+        title: 'First Carousel',
+        subtitle: 'Lorem ipsum dolor sit amet. consectetur adipiscing elit.',
+        fetchCards: async (chunkSize) => {
+            return await getCards(chunkSize);
+        }
+    }
+    const carousel = new Carousel(carouselOptions);
+
+    const carouselOptions2 = {
+        container: 'my-carousel2',
+        title: 'Second carousel',
+        subtitle: 'Lorem ipsum dolor sit amet. consectetur adipiscing elit.',
+        fetchCards: async (chunkSize) => {
+            return await getCards(chunkSize);
+        }
+    }
+    const carousel2 = new Carousel(carouselOptions2);
+</script>
+</body>
+</html>
