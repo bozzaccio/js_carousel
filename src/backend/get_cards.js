@@ -5,8 +5,6 @@
  */
 async function getCards(chunkSize) {
 
-    // await new Promise(resolve => setTimeout(resolve, 1500));
-
     const cardListLength = chunkSize ? chunkSize : Math.floor(Math.random() * 5) + 1;
     const cardList = [];
     const cardTypes = ['video', 'elearning', 'learning_plan', 'playlist'];
@@ -21,12 +19,6 @@ async function getCards(chunkSize) {
             language: Math.random() < 0.5 ? 'English' : null,
         });
     }
-
-    // return new Promise(resolve => {
-    //     setTimeout(() => {
-    //         resolve(cardList);
-    //     }, 1500);
-    // });
 
     return await new Promise(resolve => {
         setTimeout(() => {

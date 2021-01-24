@@ -17,9 +17,11 @@ let _getCardsFunction = undefined;
  ************************************************/
 
 /**
- *
+ * Carousel constructor invoke by html template.
+ * Before start the init, the function clear all the body template and set the local _carousel_array
  * @param options
  * @constructor
+ * @public
  */
 function Carousel(options) {
     _getCardsFunction = options.fetchCards;
@@ -37,7 +39,12 @@ function Carousel(options) {
     _initTemplate();
 }
 
-
+/**
+ * Carousel object model.
+ * @param options
+ * @constructor
+ * @public
+ */
 function CarouselClass(options) {
 
     this._title = options.title;
@@ -52,8 +59,6 @@ function CarouselClass(options) {
     this._pageNumber = 0;
     this._numberOfPages = 0;
     this._isLoading = false;
-
-
 }
 
 /************************************************
@@ -62,12 +67,21 @@ function CarouselClass(options) {
  *
  ************************************************/
 
+/**
+ * Add to local array the number of the carousel and start the init for all element.
+ * @private
+ */
 function _initTemplate() {
     _carousel_array.forEach(carousel => {
         _initCarouselTemplate(carousel);
     });
 }
 
+/**
+ * Init of the carousel.
+ * @param carousel
+ * @private
+ */
 function _initCarouselTemplate(carousel) {
     carousel._element.classList.add('carousel-container');
     _setCarouselHeader(carousel);
@@ -75,6 +89,11 @@ function _initCarouselTemplate(carousel) {
     _initCarouselActionButton(carousel);
 }
 
+/**
+ * Set to carousel the navigation buttons
+ * @param carousel
+ * @private
+ */
 function _initCarouselActionButton(carousel) {
 
     const nextIcon = document.createElement('i');
@@ -106,13 +125,9 @@ function _initCarouselActionButton(carousel) {
     });
 }
 
-
-/************************************************
- * ELEMENT SETTER
- ************************************************/
-
 /**
- *
+ * Set the carousel header with configuration.
+ * @param carousel
  * @private
  */
 function _setCarouselHeader(carousel) {
@@ -149,6 +164,11 @@ function _setCarouselHeader(carousel) {
     carousel._element.appendChild(header)
 }
 
+/**
+ * Set the carousel body and initialize the loading automatism.
+ * @param carousel
+ * @private
+ */
 function _setCarouselBody(carousel) {
     const body = document.createElement('div');
     body.classList.add('carousel-body');
@@ -158,6 +178,13 @@ function _setCarouselBody(carousel) {
     carousel._element.appendChild(body)
 }
 
+/**
+ * This function before load card to view, clear all the children element.
+ * Next set the card based on pageNumber.
+ * @param carousel
+ * @param skeletonCards
+ * @private
+ */
 function _setDisplayCards(carousel, skeletonCards) {
 
     carousel._carouselBody.querySelectorAll('.card').forEach(n => n.remove());
@@ -176,6 +203,12 @@ function _setDisplayCards(carousel, skeletonCards) {
     });
 }
 
+/**
+ * Load real card into carousel.
+ * @param carousel
+ * @param cardsArray
+ * @private
+ */
 function _loadCardIntoCarousel(carousel, cardsArray) {
 
     cardsArray.forEach(card => {
@@ -185,6 +218,11 @@ function _loadCardIntoCarousel(carousel, cardsArray) {
     _setDisplayCards(carousel);
 }
 
+/**
+ * Fill the carousel with skeleton card when it is loading.
+ * @param carousel
+ * @private
+ */
 function _fillCarouselWithSkeleton(carousel) {
 
     const skeletonArray = new Array(_INITIAL_CHUNK_SIZE).fill('').map(_ => _getSkeletonCard());
@@ -192,10 +230,11 @@ function _fillCarouselWithSkeleton(carousel) {
     _setDisplayCards(carousel, skeletonArray);
 }
 
-/************************************************
- * ELEMENT GETTER
- ************************************************/
-
+/**
+ * Get an empty card used while the carousel is loading.
+ * @return {HTMLDivElement}
+ * @private
+ */
 function _getSkeletonCard() {
 
     const card = document.createElement('div');
@@ -207,6 +246,12 @@ function _getSkeletonCard() {
     return card
 }
 
+/**
+ * Given card properties from the backend, this method return a card html element.
+ * @param cardProperties
+ * @return {HTMLDivElement}
+ * @private
+ */
 function _getCardElement(cardProperties) {
 
     const card = document.createElement('div');
@@ -221,6 +266,12 @@ function _getCardElement(cardProperties) {
     return card;
 }
 
+/**
+ * Get the card header template.
+ * @param cardProperties
+ * @return {HTMLDivElement}
+ * @private
+ */
 function _getCardHeader(cardProperties) {
 
     const cardHeader = document.createElement('div');
@@ -233,6 +284,12 @@ function _getCardHeader(cardProperties) {
     return cardHeader
 }
 
+/**
+ * Get the card body template.
+ * @param cardProperties
+ * @return {HTMLDivElement}
+ * @private
+ */
 function _getCardBody(cardProperties) {
 
     const cardBody = document.createElement('div');
@@ -260,6 +317,12 @@ function _getCardBody(cardProperties) {
     return cardBody;
 }
 
+/**
+ * Load the template and the header information with configuration given from the HTML template.
+ * @param cardHeader
+ * @param cardProperties
+ * @private
+ */
 function _loadCardHeaderData(cardHeader, cardProperties) {
 
     cardHeader.classList.add('card-header');
@@ -297,6 +360,12 @@ function _loadCardHeaderData(cardHeader, cardProperties) {
     }
 }
 
+/**
+ * Prepare the body of carousel given the configuration data from the template.
+ * @param cardBody
+ * @param cardProperties
+ * @private
+ */
 function _loadCardBodyData(cardBody, cardProperties) {
 
     if (!cardProperties.title) {
@@ -317,10 +386,12 @@ function _loadCardBodyData(cardBody, cardProperties) {
     }
 }
 
-/************************************************
- * ON EVENTS CALLBACK
- ************************************************/
-
+/**
+ * Setup left and right button behavior when mouse are over the carousel container.
+ * @param carousel
+ * @param event
+ * @private
+ */
 function _onCarouselBodyOver(carousel, event) {
 
     if (event === 'over') {
@@ -342,6 +413,12 @@ function _onCarouselBodyOver(carousel, event) {
     }
 }
 
+/**
+ * Invoke when next (right) button will be clicked.
+ * increases pageNumber and if the pageNumber and the numberOfPages are the same, call API for new cards.
+ * @param carousel
+ * @private
+ */
 function _onNextClick(carousel) {
 
     carousel._nextButton.style.visibility = 'hidden';
@@ -354,6 +431,12 @@ function _onNextClick(carousel) {
 
 }
 
+/**
+ * Invoke when previous (left) button will be clicked.
+ * decreases pageNumber and reload carousel cards.
+ * @param carousel
+ * @private
+ */
 function _onPreviousClick(carousel) {
 
     carousel._previousButton.style.visibility = 'hidden';
@@ -361,6 +444,12 @@ function _onPreviousClick(carousel) {
     _setDisplayCards(carousel);
 }
 
+/**
+ * Call API function and hook the promise for start carousel loading automatism.
+ * @param carousel
+ * @param chunks
+ * @private
+ */
 function _onLoadCarouselElements(carousel, chunks) {
     _setIsLoading(carousel, true);
     if (chunks) {
@@ -384,10 +473,11 @@ function _onLoadCarouselElements(carousel, chunks) {
     }
 }
 
-/************************************************
- * UTILS
- ************************************************/
-
+/**
+ * Message console logger based on errorCode.
+ * @param errorCode
+ * @private
+ */
 function _logError(errorCode) {
 
     switch (errorCode) {
@@ -405,6 +495,12 @@ function _logError(errorCode) {
     }
 }
 
+/**
+ * Set loading flag for prepare carousel with skeleton card.
+ * @param carousel
+ * @param isLoading
+ * @private
+ */
 function _setIsLoading(carousel, isLoading) {
 
     if (isLoading) {
