@@ -8,9 +8,9 @@ class Carousel {
     _tmpEndSwipe = undefined;
     _carouselBody = undefined;
 
-
     /**
-     * Carousel object model.
+     * Carousel constructor.
+     *
      * @param options
      * @constructor
      * @public
@@ -42,6 +42,7 @@ class Carousel {
         this._setCarouselBody();
         this._initCarouselActionButton();
         this._initSwipeListener();
+        this._initMouseSwipeListener();
     }
 
     /**
@@ -77,16 +78,25 @@ class Carousel {
     }
 
     /**
-     * Hook the swipe event to carousels.
+     * Hook the swipe event to carousel.
      *
      * @private
      */
     _initSwipeListener() {
 
-        const selector = '#'.concat(this._elementId);
+        this._carouselBody.addEventListener('touchstart', (event) => this._onSwipeStart(event, this));
+        this._carouselBody.addEventListener('touchend', (event) => this._onSwipeEnd(event, this));
+    }
 
-        document.querySelector(selector).addEventListener('touchstart', (event) => this._onSwipeStart(event, this));
-        document.querySelector(selector).addEventListener('touchend', (event) => this._onSwipeEnd(event, this));
+    /**
+     * Hook the mouse swipe event to carousel
+     *
+     * @private
+     */
+    _initMouseSwipeListener() {
+
+        this._carouselBody.addEventListener('mousedown', (event) => this._onMouseDown(event));
+        this._carouselBody.addEventListener('mouseup', (event) => this._onMouseUp(event));
     }
 
     /**
@@ -196,6 +206,7 @@ class Carousel {
 
     /**
      * Get an empty card used while the carousel is loading.
+     *
      * @return {HTMLDivElement}
      * @private
      */
@@ -211,7 +222,8 @@ class Carousel {
     }
 
     /**
-     * Given card properties from the backend, this method return a card html element.
+     * Given card properties from the backend, this method return a card html element.ù
+     *
      * @param cardProperties
      * @return {HTMLDivElement}
      * @private
@@ -232,6 +244,7 @@ class Carousel {
 
     /**
      * Get the card header template.
+     *
      * @param cardProperties
      * @return {HTMLDivElement}
      * @private
@@ -250,6 +263,7 @@ class Carousel {
 
     /**
      * Get the card body template.
+     *
      * @param cardProperties
      * @return {HTMLDivElement}
      * @private
@@ -283,6 +297,7 @@ class Carousel {
 
     /**
      * Load the template and the header information with configuration given from the HTML template.
+     *
      * @param cardHeader
      * @param cardProperties
      * @private
@@ -326,6 +341,7 @@ class Carousel {
 
     /**
      * Prepare the body of carousel given the configuration data from the template.
+     *
      * @param cardBody
      * @param cardProperties
      * @private
@@ -410,6 +426,7 @@ class Carousel {
 
     /**
      * Set temporary variables after the user start swiping.
+     *
      * @param event
      * @param context
      * @private
@@ -421,6 +438,7 @@ class Carousel {
 
     /**
      * Navigate after finish the swipe action.
+     *
      * @param event
      * @param context
      * @private
@@ -428,6 +446,39 @@ class Carousel {
     _onSwipeEnd(event, context) {
 
         context._tmpEndSwipe = event.changedTouches[0].pageX;
+        this._startNavigation(context);
+    }
+
+    /**
+     * Set startSwipe property
+     *
+     * @param event
+     * @private
+     */
+    _onMouseDown(event) {
+
+        this._tmpStartSwipe = event.pageX;
+    }
+
+    /**
+     * Set endSwipe property and call start navigation.
+     *
+     * @param event
+     * @private
+     */
+    _onMouseUp(event) {
+
+        this._tmpEndSwipe = event.pageX;
+        this._startNavigation(this);
+    }
+
+    /**
+     * Execute navigation after mouse or touch swipe
+     *
+     * @param context
+     * @private
+     */
+    _startNavigation(context) {
 
         if (context._tmpEndSwipe < context._tmpStartSwipe) {
             if (context._carouselBody.getElementsByClassName('card').length === context._INITIAL_CHUNK_SIZE)
@@ -469,6 +520,7 @@ class Carousel {
 
     /**
      * Message console logger based on errorCode.
+     *
      * @param errorCode
      * @private
      */
