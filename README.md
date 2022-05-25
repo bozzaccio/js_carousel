@@ -1,6 +1,6 @@
 # Carousel library.
 
-see the carousel at: https://bozzaccio.github.io/js_carousel/
+see the carousel at: [https://bozzaccio.github.io/js_carousel/](https://bozzelliandrea.github.io/js_carousel/)
 
 <h3>LIBRARY INFO:</h3>
 
